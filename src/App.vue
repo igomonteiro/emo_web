@@ -18,29 +18,16 @@ export default {
 </script>
 
 <style>
-  .bar-link-dark {
+  .bar-link {
     color: #BDBDBD !important;
     text-decoration: none;
   }
 
-  .bar-link-dark:hover {
+  .bar-link:hover {
     color: white !important;
   }
 
-  .bar-link-light {
-    color: #828282 !important;
-    text-decoration: none;
-  }
-
-  .bar-link-light:hover {
-    color: black !important;
-  }
-
-  .active-link-light {
-    color: black !important;
-  }
-
-  .active-link-dark {
+  .active-link {
     color: white !important;
   }
 </style>

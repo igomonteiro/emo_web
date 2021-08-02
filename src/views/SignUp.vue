@@ -1,11 +1,11 @@
 <template>
   <v-container fluid fill-height>
     <v-layout align-center justify-center>
-      <v-card color="accent" elevation="10">
+      <v-card color="primary" elevation="10">
         <v-row align="center" justify="center">
           <v-col cols="12">
             <v-card-title class="font-weight-bold secondary--text text-h3 justify-center mt-6">
-              Cadastro
+              Cadastre-se
             </v-card-title>
           </v-col>
 
@@ -59,7 +59,7 @@
                     rounded
                     block
                     class="font-weight-bold"
-                    color="secondary"
+                    color="accent primary--text"
                     :disabled="submitStatus === 'LOADING'"
                     @click="submit"
                   >
@@ -91,18 +91,18 @@
         </v-row>
       </v-card>
     </v-layout>
-
+    <!-- Snackbar -->
     <v-snackbar
       v-model="snackbar"
       :timeout="timeout"
-      color="secondary"
+      color="primary"
       top
     >
       {{ snackbarMessage }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="primary"
+          color="accent"
           icon
           v-bind="attrs"
           @click="snackbar = false"
@@ -125,7 +125,7 @@
         email: '',
         password: '',
       },
-      submitStatus: null,
+      submitStatus: '',
       snackbar: false,
       snackbarMessage: '',
       show_password: false,
@@ -166,13 +166,8 @@
     methods: {
       async submit() {
         this.$v.$touch();
-        if (this.$v.$invalid) {
-          this.submitStatus = null;
-          this.snackbarMessage = 'Por favor, verifique as suas informações.'
-          this.snackbar = true;
-        } else {
+        if (!this.$v.$invalid) {
           this.submitStatus = 'LOADING';
-          
           this.$store.dispatch('auth/signUp', this.form)
           .then(() => {
             this.submitStatus = null;

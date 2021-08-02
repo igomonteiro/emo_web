@@ -2,11 +2,11 @@
   <v-app>
     <AppBar/>   
     <v-main app>
-      <v-container fluid>
+      <!-- <v-container fluid>
         <v-layout align-center justify-center>
-          <v-card elevation="6" min-width="300">
+          <v-card color="primary" elevation="6" min-width="300">
             <v-card-title
-              class="grey--text secondary--text font-weight-bold text-h5 justify-center"
+              class="secondary--text font-weight-bold text-h5 justify-center"
             >
               Resumo de hoje!
             </v-card-title>
@@ -34,7 +34,7 @@
             </v-card-text>
           </v-card> 
         </v-layout>
-      </v-container>
+      </v-container> -->
     </v-main>
   </v-app>
 </template>

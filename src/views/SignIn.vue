@@ -1,11 +1,16 @@
 <template>
   <v-container fluid fill-height>
     <v-layout align-center justify-center>
-      <v-card color="accent" elevation="10">
+      <v-card color="primary" elevation="10">
         <v-row align="center" justify="center">
           <v-col cols="12">
-            <v-card-title class="font-weight-bold secondary--text text-h3 justify-center mt-6">
-              Login
+            <v-card-title class="justify-center mt-6">
+              <v-img
+                src="../assets/logo.png"
+                max-width="180"
+                max-height="180"
+                contain
+              ></v-img>
             </v-card-title>
           </v-col>
 
@@ -22,6 +27,7 @@
                   placeholder="Insira o seu e-mail"
                   prepend-inner-icon="mdi-account-outline"
                   @input="$v.form.email.$touch()"
+                  @blur="$v.form.email.$touch()"
                 ></v-text-field>
 
                 <v-text-field
@@ -35,6 +41,7 @@
                   prepend-inner-icon="mdi-lock-outline"
                   @click:append="show_password = !show_password"
                   @input="$v.form.password.$touch()"
+                  @blur="$v.form.password.$touch()"
                 ></v-text-field>
 
                 <v-card-text
@@ -44,10 +51,16 @@
                     rounded
                     block
                     class="font-weight-bold"
-                    color="secondary"
+                    color="accent primary--text"
+                    :disabled="submitStatus === 'LOADING'"
                     @click="submit"
                   >
-                    ENTRAR
+                    <v-progress-circular
+                      indeterminate
+                      v-if="submitStatus === 'LOADING'"
+                      color="primary"
+                    ></v-progress-circular>
+                    <span v-else>ENTRAR</span>
                   </v-btn>
                 </v-card-text>
                 
@@ -69,6 +82,26 @@
         </v-row>
       </v-card>
     </v-layout>
+    <!-- Snackbar -->
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+      color="primary"
+      top
+    >
+      {{ snackbarMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="accent"
+          icon
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -82,7 +115,11 @@
         email: '',
         password: '',
       },
+      submitStatus: '',
       show_password: false,
+      snackbar: false,
+      snackbarMessage: '',
+      timeout: 3000,
     }),
     validations: {
       form: {
@@ -108,14 +145,24 @@
       }
     },
     methods: {
+      clearData() {
+        this.form.email = '';
+        this.form.password = '';
+        this.submitStatus = '';
+        this.show_password = '';
+      },
       submit() {
+        this.$v.$touch();
         if (!this.$v.$invalid) {
+          this.submitStatus = 'LOADING';
           this.$store.dispatch('auth/signIn', this.form)
           .then(() => this.$router.replace({
               name: 'Dashboard',
           }))
           .catch(() => {
-            console.log('Login failed');
+            this.submitStatus = null;
+            this.snackbarMessage = 'Seu login ou senha estão errados.'
+            this.snackbar = true;
           });
         }
       }

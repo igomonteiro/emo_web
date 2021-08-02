@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "face-api.js": "^0.22.2",
     "vue": "^2.6.11",
     "vue-picture-input": "^2.1.6",
     "vue-router": "^3.2.0",

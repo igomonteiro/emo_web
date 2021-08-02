@@ -4,7 +4,7 @@
     <v-main app>
       <v-container fluid>
         <v-layout align-center justify-center>
-          <v-card color="accent" elevation="10">
+          <v-card color="primary" elevation="10">
             <v-row align="center" justify="center">
               <v-col cols="12">
                 <v-card-title class="justify-center mt-6">
@@ -16,12 +16,13 @@
                       height="200" 
                       margin="16" 
                       radius="50"
-                      zIndex="0"
+                      :zIndex="0"
+                      :prefill="imageUrl"
                       accept="image/jpeg,image/png" 
                       size="10"
                       :hideChangeButton="true"
                       :customStrings="{
-                        drag: 'Pegue e arraste sua imagem aqui!'
+                        drag: 'Clique ou arraste sua imagem aqui!'
                       }">
                     </picture-input>
                   </template>
@@ -78,9 +79,8 @@
                       <v-btn
                         rounded
                         block
-                        class="font-weight-bold"
-                        :class="$vuetify.theme.dark ? 'primary--text' : 'white--text'"
-                        :color="$vuetify.theme.dark ? 'white' : 'secondary'"
+                        class="font-weight-bold primary--text"
+                        color="accent"
                         :disabled="submitStatus === 'LOADING'"
                         @click="submit"
                       >
@@ -102,14 +102,14 @@
          <v-snackbar
             v-model="snackbar"
             timeout="2000"
-            color="secondary"
+            color="primary"
             top
           >
             {{ snackbarMessage }}
 
             <template v-slot:action="{ attrs }">
               <v-btn
-                color="primary"
+                color="accent"
                 icon
                 v-bind="attrs"
                 @click="snackbar = false"
@@ -124,10 +124,10 @@
 </template>
 
 <script>
-  
-import AppBar from '@/components/AppBar';
-import PictureInput from 'vue-picture-input';
 
+import AppBar from '@/components/AppBar';
+import api from '@/services/api';
+import PictureInput from 'vue-picture-input';
 import { required, requiredIf, maxLength, minLength } from 'vuelidate/lib/validators';
 
 export default {
@@ -139,7 +139,7 @@ export default {
   data: () => ({
     showOldPassword: false,
     showPassword: false,
-    submitStatus: null,
+    submitStatus: '',
     snackbarMessage: '',
     snackbar: false,
     imageUrl: '',
@@ -147,7 +147,7 @@ export default {
       name: '',
       oldPassword: '',
       password: '',
-      image: '',
+      avatar: '',
     },
   }),
   validations: {
@@ -190,6 +190,8 @@ export default {
   },
   mounted() {
     this.profile.name = this.$store.state.user.profile.name;
+    this.profile.avatar = this.$store.state.user.profile.avatar;
+    this.imageUrl = this.profile.avatar.url;
   },
   methods: {
     async submit() {
@@ -215,16 +217,20 @@ export default {
         });
       }
     },
-    onChange (image) {
-      console.log('New picture selected!')
+    async onChange(image) {
       if (image) {
-        console.log('Picture loaded.')
-        this.image = image
+        const formData = new FormData();
+        formData.append('file', this.$refs.pictureInput.file);
+        const response = await api.post('files', formData);
+        const { _id, url} = response.data;
+        this.profile.avatar = _id;
+        this.imageUrl = url;
       } else {
         console.log('FileReader API not supported: use the <form>, Luke!')
       }
     },
     clear() {
+      this.submitStatus = '';
       this.profile.oldPassword = '';
       this.profile.password = '';
     }
