@@ -18,9 +18,8 @@ export default {
   actions: {
     async updateProfile({ commit }, payload) {
       const { name, avatar, ...rest } = payload;
-      console.log(payload);
       const profile = Object.assign(
-        { name, avatar},
+        { name, avatar },
         rest.oldPassword ? rest : {}
       );
 

@@ -125,7 +125,6 @@
 
 <script>
 
-import AppBar from '@/components/AppBar';
 import api from '@/services/api';
 import PictureInput from 'vue-picture-input';
 import { required, requiredIf, maxLength, minLength } from 'vuelidate/lib/validators';
@@ -133,7 +132,6 @@ import { required, requiredIf, maxLength, minLength } from 'vuelidate/lib/valida
 export default {
   name: 'Profile',
   components: {
-    AppBar,
     PictureInput,
   },
   data: () => ({
@@ -191,7 +189,7 @@ export default {
   mounted() {
     this.profile.name = this.$store.state.user.profile.name;
     this.profile.avatar = this.$store.state.user.profile.avatar;
-    this.imageUrl = this.profile.avatar.url;
+    this.imageUrl = this.imageUrl || this.$store.state.user.profile.avatar.url;
   },
   methods: {
     async submit() {

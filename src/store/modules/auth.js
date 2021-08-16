@@ -28,7 +28,6 @@ export default {
       return dispatch('attempt', response.data.token);
     },
     async attempt({ commit, state }, token) {
-
       if (token) {
         commit('SET_TOKEN', token);
       }
@@ -54,6 +53,7 @@ export default {
       commit('SET_TOKEN', null);
       commit('SET_USER', null);
       commit('user/UPDATE_PROFILE', null, { root: true });
+      commit('camera/STOP_CAMERA', null, { root: true });
     }
   }
 }
