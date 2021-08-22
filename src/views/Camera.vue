@@ -38,9 +38,12 @@
       this.canvas.style.position = 'absolute';
       await this.startVideo();
     },
+    beforeDestroy() {
+      this.$store.dispatch('camera/stopVideo');
+    },
     methods: {
       async startVideo() {
-        await this.$store.dispatch('camera/startVideo')
+        this.$store.dispatch('camera/startVideo')
           .then(stream => {
             this.cam.srcObject = stream;
             const canvasContext = this.canvas.getContext("2d");

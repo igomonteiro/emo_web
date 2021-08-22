@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import SignIn from '@/views/SignIn.vue';
 import SignUp from '@/views/SignUp.vue';
 import Dashboard from '@/views/Dashboard.vue';
-import History from '@/views/History.vue';
 import Camera from '@/views/Camera.vue';
 import Settings from '@/views/Settings.vue';
 import Profile from '@/views/Profile.vue';
@@ -26,14 +25,6 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
-    meta: {
-      requiresAuth: true,
-    }
-  },
-  {
-    path: '/history',
-    name: 'History',
-    component: History,
     meta: {
       requiresAuth: true,
     }

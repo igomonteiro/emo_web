@@ -54,7 +54,7 @@
             >
               <v-avatar color="secondary" size="42">
                 <img
-                  v-if="imageUrl"
+                  v-if="imageUrl.length > 0 && imageUrl"
                   :src="imageUrl"
                 />
 

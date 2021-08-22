@@ -29,6 +29,26 @@
               <v-card-text>
                 <span class="text-h6">
                   Desenhar linhas de rosto na detecção?
+                  <v-tooltip
+                    right
+                    max-width="250"
+                    content-class="white--text text-caption text-justify"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        size="13"
+                        color="grey"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        fas fa-info-circle
+                      </v-icon>
+                    </template>
+                    <span>
+                      Linhas de rosto demarcam o rosto do usuário, como boca, nariz
+                      e olhos, mas pode poluir um pouco a visualização.
+                    </span>
+                  </v-tooltip>
                 </span>
                 <v-radio-group
                   @change="setDrawLandmarks"
@@ -50,7 +70,75 @@
                 </v-radio-group>
 
                 <span class="text-h6">
+                  Distância da detecção
+                  <v-tooltip
+                    right
+                    max-width="250"
+                    content-class="white--text text-caption text-justify"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        size="13"
+                        color="grey"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        fas fa-info-circle
+                      </v-icon>
+                    </template>
+                    <span >
+                      Se você estiver muito perto da câmera, por exemplo, é
+                      recomendável que se utilize a opção "perto". Quanto maior
+                      a distância de detecção, mais desempenho do computador será necessário.
+                    </span>
+                  </v-tooltip>
+                </span>
+                <v-radio-group
+                  @change="setDistance"
+                  v-model="distance"
+                  mandatory
+                  dense
+                  row
+                >
+                  <v-radio
+                    label="Perto"
+                    :value="160"
+                    color="accent"
+                  ></v-radio>
+                  <v-radio
+                    label="Médio"
+                    :value="224"
+                    color="accent"
+                  ></v-radio>
+                  <v-radio
+                    label="Longe"
+                    :value="416"
+                    color="accent"
+                  ></v-radio>
+                </v-radio-group>
+
+                <span class="text-h6">
                   Mínimo de probabilidade a ser detectada
+                  <v-tooltip
+                    right
+                    max-width="250"
+                    content-class="white--text text-caption text-justify"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        size="13"
+                        color="grey"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        fas fa-info-circle
+                      </v-icon>
+                    </template>
+                    <span>
+                      Serão detectadas apenas expressões com confidência maior
+                      que a desejada.
+                    </span>
+                  </v-tooltip>
                 </span>
 
                 <v-slider
@@ -81,6 +169,7 @@ export default {
     selectedVideo: null,
     minConfidence: 0,
     drawLandmarks: false,
+    distance: 160,
   }),
   beforeMount() {
     navigator.mediaDevices.enumerateDevices()
@@ -102,6 +191,9 @@ export default {
 
     const standardConfidence = JSON.parse(localStorage.getItem('minConfidence'));
     this.minConfidence = standardConfidence * 100;
+
+    const standardDistance = JSON.parse(localStorage.getItem('distance'));
+    this.distance = standardDistance;
   },
   methods: {
     setStandardDevice() {
@@ -113,8 +205,11 @@ export default {
     },
     setMinConfidence() {
       localStorage.setItem('minConfidence', this.minConfidence/100);
+    },
+    setDistance() {
+      localStorage.setItem('distance', this.distance);
     }
-  }
+  },
 }
 </script>
 

@@ -13,8 +13,9 @@
             icon-color="error"
           >
             Para começar o monitoramento, é necessário que seu dispositivo de vídeo
-            seja inicializado, para isso, acesse o menu câmera.
-            Caso o aviso persista, verifique se você tem algum dispositivo conectado
+            seja inicializado, para isso, acesse o menu câmera e permita que o aplicativo
+            use sua câmera.
+            Caso este aviso persista, verifique se você tem algum dispositivo conectado
             ou se realmente tem algum dispositivo selecionado em:
             <span class="font-weight-bold">Configurações</span>.
           </v-banner>          
@@ -77,53 +78,88 @@
           </v-progress-circular>
         </v-row>
 
-        <v-row v-else-if="loaded && loadDayExpressions.length" justify="center">
-          <v-card
-            color="primary"
-            elevation="6"
-            min-width="300"
-          >
-            <v-card-title
-              class="secondary--text font-weight-bold text-h5 justify-center"
+        <v-row justify="center">
+          <v-col cols="6" class="d-flex justify-center">
+            <v-card
+              v-if="loaded && loadDayExpressions.length" 
+              color="primary"
+              elevation="6"
+              min-width="300"
             >
-              Resumo do dia!
-            </v-card-title>
-
-            <v-divider></v-divider>
-
-            <v-card-text>
-              <v-timeline
-                align-top
-                dense
+              <v-card-title
+                class="secondary--text font-weight-bold text-h5 justify-center"
               >
-                <v-timeline-item
-                  v-for="value in loadDayExpressions"
-                  :key="value.classification"
-                  :icon="icons[value.classification].icon"
-                  :icon-color="icons[value.classification].color"
-                  fill-dot
-                >
-                  <div class="text-body-1 text-capitalize accent--text font-weight-bold">
-                    {{ value.classification }}
-                  </div>
-                  <span class="font-weight-bold"> {{ value.part + '%'}} </span>
-                </v-timeline-item>
-              </v-timeline>                             
-            </v-card-text>
-          </v-card>                     
-        </v-row>
-     
-        <v-row v-else justify="center">
-          <span class="text-h5 text-uppercase">
-            Nenhum dado foi encontrado para esta data!
-          </span> 
-        </v-row>
+                Resumo do dia!
+              </v-card-title>
 
-        <v-row class="mt-10" justify="center">
-          <v-col cols="12">
-            <v-card color="primary">
-              <pie-chart v-if="loaded && loadDayExpressions.length" :chartdata="chartData" :options="options"/>
-            </v-card>
+              <v-divider></v-divider>
+
+              <v-card-text>
+                <v-timeline
+                  align-top
+                  dense
+                >
+                  <v-timeline-item
+                    v-for="value in loadDayExpressions"
+                    :key="value.classification"
+                    :icon="icons[value.classification].icon"
+                    :icon-color="icons[value.classification].color"
+                    fill-dot
+                  >
+                    <div class="text-body-1 text-capitalize accent--text">
+                      {{ value.classification }}
+                    </div>
+                    <span class="font-weight-bold"> {{ value.part }}%</span>
+                  </v-timeline-item>
+                </v-timeline>                             
+              </v-card-text>
+            </v-card>          
+
+            <span v-else-if="loaded" class="text-body-1 text-uppercase d-flex flex-column">
+              Nenhum dado foi encontrado para hoje!
+              <v-icon class="mt-6" size="60">fas fa-dizzy</v-icon>
+            </span>
+          </v-col>
+
+          <v-col cols="6" class="d-flex justify-center">
+              <v-card
+                v-if="loaded && loadWeekExpressions.length" 
+                color="primary"
+                elevation="6"
+                min-width="300"
+                justify="center"
+              >
+                <v-card-title
+                  class="secondary--text font-weight-bold text-h5 justify-center"
+                >
+                  Resumo da semana!
+                </v-card-title>
+                <v-divider></v-divider>
+                <v-list class="transparent">
+                    <v-list-item
+                      v-for="day in loadWeekExpressions"
+                      :key="day.day"
+                    >
+                      <v-list-item-title class="d-flex flex-column justify-space-around">
+                        <span class="accent--text">{{ day.day }}</span>
+                        <span class="grey--text text-caption">{{ day.date || '' }}</span>
+                      </v-list-item-title>
+                      <v-list-item-icon>
+                        <v-icon :color=" day.classification ? icons[day.classification].color : 'grey'">
+                          {{day.classification ?  icons[day.classification].icon : 'fas fa-times'}}
+                        </v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-subtitle class="text-right font-weight-bold">
+                        {{ day.part || '0.00' }}%
+                      </v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+              </v-card>
+
+              <span v-else-if="loaded" class="text-body-1 text-uppercase d-flex flex-column">
+                Nenhum dado foi encontrado para essa semana!
+                <v-icon class="mt-6" size="60">fas fa-dizzy</v-icon>
+              </span> 
           </v-col>
         </v-row>
       </v-container>
@@ -133,14 +169,10 @@
 
 <script>
 
-import PieChart from '@/components/PieChart';
 import { format, parseISO } from 'date-fns';
 
 export default {
     name: 'Dashboard',
-    components: {
-      PieChart
-    },
     data: () => ({
       date: format(parseISO(new Date().toISOString()), 'yyyy-MM-dd'),
       modal: false,
@@ -168,73 +200,29 @@ export default {
         surpreso: {
           icon: 'fas fa-surprise',                
           color: 'yellow darken-3'
-        }
-      },
-      chartData: {
-        labels: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
-        datasets: [{
-          label: 'Gráfico Expressão x Tempo',
-          data: [1, 1, 1, 1, 1, 1, 1],
-          borderWidth: 2,
-          backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)',
-            'rgb(255, 0, 20)',
-            'rgb(30, 18, 33)',
-            'rgb(10, 90, 100)',
-            'rgb(0, 200, 0)',
-          ],
-          hoverOffset: 10,
-        }]
-      },
-      options: {
-        legend: {
-          display: true,
-          position: 'top',
-          labels: {
-            fontColor: '#FFFFFF',
-            fontFamily: "'Poppins', sans-serif",
-            fontStyle: 'normal',
-            color: [
-              'rgb(255, 99, 132)',
-              'rgb(54, 162, 235)',
-              'rgb(255, 205, 86)',
-              'rgb(255, 0, 20)',
-              'rgb(30, 18, 33)',
-              'rgb(10, 90, 100)',
-              'rgb(0, 200, 0)',
-            ]
-          }
         },
-        title: {
-          display: true,
-          text: 'Fração das emoções durante os dias da semana',
-          fontColor: '#FFFFFF',
-          fontSize: 16,
-          fontFamily: "'Poppins', sans-serif",
-          fontStyle: 'normal'
-        },
-        responsive: true,
-        maintainAspectRatio: false
-      }
+      },
     }),
     async mounted() {
-      await this.$store.dispatch('expressions/getAllTodayExpressions');
       this.loaded = false;
       await this.$store.dispatch('expressions/getByDateExpressions', this.date);
+      await this.$store.dispatch('expressions/getWeekExpressions', this.date);
       this.loaded = true;
     },
     methods: {
       async filterByDate() {
         this.loaded = false;
         await this.$store.dispatch('expressions/getByDateExpressions', this.date);
+        await this.$store.dispatch('expressions/getWeekExpressions', this.date);
         this.loaded = true;
       }
     },
     computed: {
       loadDayExpressions() {
         return this.$store.getters['expressions/dayExpressions'];
+      },
+      loadWeekExpressions() {
+        return this.$store.getters['expressions/weekExpressions'];
       },
       computedDateFormattedDatefns () {
         return this.date ? format(parseISO(this.date), 'dd/MM/yyyy') : ''

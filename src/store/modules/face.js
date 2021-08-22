@@ -10,7 +10,7 @@ export default {
         'neutral': 'neutro',
         'happy': 'feliz',
         'sad': 'triste',
-        'angry': 'com raiva',
+        'angry': 'irritado',
         'surprised': 'surpreso'
       },
     },
@@ -50,8 +50,6 @@ export default {
         await faceapi.nets.faceLandmark68TinyNet.loadFromUri('face-api/models');
         await faceapi.nets.faceLandmark68Net.loadFromUri('/face-api/models');
         await faceapi.nets.faceExpressionNet.loadFromUri('/face-api/models');
-        await faceapi.nets.ageGenderNet.loadFromUri('/face-api/models');
-        await faceapi.nets.ssdMobilenetv1.loadFromUri('/face-api/models');
         commit('LOADED_MODELS');
       }
     },
@@ -60,7 +58,7 @@ export default {
         .detectSingleFace(
           canvas,
           new faceapi.TinyFaceDetectorOptions({
-            inputSize: 160,
+            inputSize: JSON.parse(localStorage.getItem('distance')) || 160,
           })
         )
         .withFaceLandmarks(true)
