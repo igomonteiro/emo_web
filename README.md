@@ -1,24 +1,9 @@
-# emo_nitoring
+# emo_web
+## Como executar?
+- Basta clonar o repositório.
+- Executar os comandos npm install ou yarn install para instalar as dependências
+- Executar o projeto com yarn serve
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Observações
+- Nota-se que no arquivo de configurações do vue (vue.config.js) foram utilizadas opções para utilizar o protocolo SSL e executar o projeto em página HTTPS.
+- Para executar sem precisar emitir certificados, basta retirar essas opções.
